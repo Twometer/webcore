@@ -1,0 +1,2 @@
+# webcore
+Webapp core libraries
