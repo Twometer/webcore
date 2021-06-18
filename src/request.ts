@@ -30,9 +30,10 @@ export class Request {
      * Parses the object and its matching template recursively
      * @param object    The object to parse
      * @param template  The template on which to parse
+     * @param parentKey The key of the parent, to form a path
      * @private
      */
-    private static parseObject(object: any, template: any): any {
+    private static parseObject(object: any, template: any, parentKey: string = ''): any {
         let parsed: any = {};
         for (let key in template) {
             if (!template.hasOwnProperty(key))
@@ -40,22 +41,25 @@ export class Request {
 
             let templateVal = template[key];
             let expectedType: any = typeof templateVal;
+            let fullPath = this.concatKey(parentKey, key);
 
             if (expectedType == 'function') {
                 expectedType = this.classnameToTypename(templateVal.name)
             }
 
             if (expectedType == 'object') {
-                parsed[key] = this.parseObject(object[key], template[key]);
+                parsed[key] = this.parseObject(object[key], template[key], fullPath);
                 continue;
             }
 
-            if (object[key] != null) {
+            if (object == null) {
+                throw Error(`Missing key ${parentKey}`)
+            } else if (object[key] != null) {
                 parsed[key] = object[key];
             } else if (typeof template[key] == expectedType) {
                 parsed[key] = template[key];
             } else {
-                throw Error(`Missing key ${key}`);
+                throw Error(`Missing key ${fullPath}`)
             }
         }
         return parsed;
@@ -75,6 +79,13 @@ export class Request {
             default:
                 throw Error(`Unsupported property type ${classname}`);
         }
+    }
+
+    private static concatKey(parent: string, self: string): string {
+        if (parent == '')
+            return self;
+        else
+            return `${parent}.${self}`;
     }
 
 }
