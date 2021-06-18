@@ -1,2 +1,2 @@
 # webcore
-Webapp core libraries
+Core library for NodeJS webapps
