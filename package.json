@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Twometer/webcore#readme",
   "devDependencies": {
+    "@types/express": "^4.17.12",
     "@types/jest": "^26.0.23",
     "jest": "^27.0.4",
     "ts-jest": "^27.0.3",

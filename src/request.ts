@@ -1,3 +1,5 @@
+import {Response} from "express";
+
 export class Request {
 
     private readonly template: any;
@@ -13,12 +15,24 @@ export class Request {
     /**
      * Parse a request body into the template of this request.
      * @param body The request body
+     * @param resp Pass in the Express response to automatically generate a 400 response
      */
-    parse(body: any): any | null {
-        return Request.parseObject(body, this.template);
+    parse(body: any, resp: Response | null = null): any | null {
+        try {
+            return Request.parseObject(body, this.template);
+        } catch (e) {
+            resp?.status(400).send(e.message);
+            return null;
+        }
     }
 
-    private static parseObject(object: any, template: any): any | null {
+    /**
+     * Parses the object and its matching template recursively
+     * @param object    The object to parse
+     * @param template  The template on which to parse
+     * @private
+     */
+    private static parseObject(object: any, template: any): any {
         let parsed: any = {};
         for (let key in template) {
             if (!template.hasOwnProperty(key))
@@ -32,10 +46,7 @@ export class Request {
             }
 
             if (expectedType == 'object') {
-                let subObject = this.parseObject(object[key], template[key]);
-                if (subObject == null)
-                    return null;
-                parsed[key] = subObject;
+                parsed[key] = this.parseObject(object[key], template[key]);
                 continue;
             }
 
@@ -44,12 +55,17 @@ export class Request {
             } else if (typeof template[key] == expectedType) {
                 parsed[key] = template[key];
             } else {
-                return null;
+                throw Error(`Missing key ${key}`);
             }
         }
         return parsed;
     }
 
+    /**
+     * Converts a classname (e.g.'Number' and 'String') into their type names ('number', 'string')
+     * @param classname The class name
+     * @private
+     */
     private static classnameToTypename(classname: string): string {
         switch (classname) {
             case 'Number':
