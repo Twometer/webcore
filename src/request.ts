@@ -62,7 +62,7 @@ export class Request {
             if (object == null) {
                 throw Error(`Missing key ${parentKey}`)
             } else if (object[key] != null) {
-                parsed[key] = object[key];
+                parsed[key] = this.tryCoerceType(expectedType, object[key]);
             } else if (typeof template[key] == expectedType) {
                 parsed[key] = template[key];
             } else {
@@ -70,6 +70,18 @@ export class Request {
             }
         }
         return parsed;
+    }
+
+
+    private static tryCoerceType(typename: string, object: any): any {
+        try {
+            if (typename == 'number' && typeof object != 'number')
+                return parseFloat(object);
+            else
+                return object;
+        } catch {
+            return object;
+        }
     }
 
     /**
