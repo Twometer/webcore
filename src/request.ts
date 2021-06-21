@@ -1,5 +1,12 @@
 import {Response} from "express";
 
+/**
+ * Used to define a JSON request from a template.
+ * The template defines what the request should look like,
+ * and specifies default values. This class will map an incoming
+ * request to these values, validating any missing keys and assigning
+ * defaults where neccessary.
+ */
 export class Request {
 
     private readonly template: any;
