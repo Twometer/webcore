@@ -109,9 +109,9 @@ test('Response generator', () => {
 
     let parsed = request.parse(badObject1, expressSimulator);
     expect(parsed).toBeNull();
-    expect(generatedMessage).toBe('Missing key subObject');
+    expect(generatedMessage).toStrictEqual({"error": "Missing key subObject"});
 
     parsed = request.parse(badObject2, expressSimulator);
     expect(parsed).toBeNull();
-    expect(generatedMessage).toBe('Missing key subObject.subNumber');
+    expect(generatedMessage).toStrictEqual({"error": "Missing key subObject.subNumber"});
 })

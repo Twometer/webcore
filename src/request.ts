@@ -1,4 +1,5 @@
 import {Response} from "express";
+import {error} from "./utils";
 
 /**
  * Used to define a JSON request from a template.
@@ -28,7 +29,9 @@ export class Request {
         try {
             return Request.parseObject(body, this.template);
         } catch (e) {
-            resp?.status(400).send(e.message);
+            if (resp != null) {
+                error(resp, 400, e.message);
+            }
             return null;
         }
     }
@@ -71,7 +74,6 @@ export class Request {
         }
         return parsed;
     }
-
 
     private static tryCoerceType(typename: string, object: any): any {
         try {
