@@ -97,6 +97,8 @@ export class Request {
                 return 'number';
             case 'String':
                 return 'string';
+            case 'Boolean':
+                return 'boolean';
             default:
                 throw Error(`Unsupported property type ${classname}`);
         }

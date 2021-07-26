@@ -115,3 +115,10 @@ test('Response generator', () => {
     expect(parsed).toBeNull();
     expect(generatedMessage).toStrictEqual({"error": "Missing key subObject.subNumber"});
 })
+
+test('Booleans', () => {
+    let request = new Request({a: false, b: Boolean});
+    let parsed = request.parse({b: true});
+    expect(parsed.a).toBe(false)
+    expect(parsed.b).toBe(true)
+})
